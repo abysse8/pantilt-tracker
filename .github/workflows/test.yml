@@ -1,0 +1,25 @@
+# Vérification automatique de la branche de référence sur GitHub.
+# Aucun accès aux moteurs : tous les essais sont logiciels ou simulés.
+name: C reference tests
+on:
+  push:
+    branches: [demo]
+  pull_request:
+    branches: [demo]
+# Le workflow lit le dépôt ; il ne doit pas écrire dans le code.
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Compilation et ensemble des tests, avec les outils de la machine Ubuntu.
+      - name: Build and test
+        run: make test
+      # Recompiler avec un détecteur de comportements C indéfinis.
+      # Une erreur détectée arrête le test au lieu de poursuivre silencieusement.
+      - name: Check undefined behavior
+        run: |
+          make clean
+          make test CFLAGS='-std=c11 -O1 -g -Wall -Wextra -Wpedantic -fsanitize=undefined -fno-sanitize-recover=all' LDFLAGS='-fsanitize=undefined'

@@ -3,3 +3,6 @@ build/
 data/*.yuv
 data/*.csv
 *.csv
+
+# Rapports locaux de couverture : générés pour vérifier les tests, pas des sources.
+*.gcov
